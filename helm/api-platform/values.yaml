@@ -38,12 +38,12 @@ mercure:
 postgresql:
   enabled: true
   # If bringing your own PostgreSQL, the full uri to use
-  #url: postgresql://api-platform:!ChangeMe!@database:5432/api?serverVersion=13&charset=utf8
+  #url: postgresql://api-platform:ChangeMe123@database:5432/api?serverVersion=13&charset=utf8
   global:
     postgresql:
       auth:
         username: "example"
-        password: "!ChangeMe!"
+        password: "ChangeMe123"
         database: "api"
   # Persistent Volume Storage configuration.
   # ref: https://kubernetes.io/docs/user-guide/persistent-volumes
