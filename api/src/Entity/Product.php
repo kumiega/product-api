@@ -1,16 +1,23 @@
 <?php
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'products')]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource]
+#[Assert\Callback('validatePrice')]
+#[ApiResource(
+    normalizationContext: ['groups' => ['product:read']],
+    denormalizationContext: ['groups' => ['product:write']]
+)]
 class Product
 {
     #[ORM\Id]
@@ -18,14 +25,23 @@ class Product
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
+    #[Groups(['product:read', 'product:write'])]
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank]
     private string $name;
 
+    #[Groups(['product:read', 'product:write'])]
     #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
     #[Assert\NotBlank]
     #[Assert\Positive]
-    private float $price;
+    #[ApiProperty(
+        types: 'https://schema.org/price',
+        openapiContext: [
+            'type'    => 'string',
+            'example' => '99.99',
+        ]
+    )]
+    private string $price;
 
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
@@ -33,9 +49,14 @@ class Product
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\ManyToMany(targetEntity : Category::class, inversedBy: 'products')]
+    #[Groups(['product:read', 'product:write'])]
+    #[ORM\ManyToMany(targetEntity : Category::class, inversedBy: 'products', cascade: ['persist'])]
     #[ORM\JoinTable(name: 'product_categories')]
-    #[Assert\Count(min: 1, minMessage: 'The product must be in at least one category.')]
+    #[Assert\Count(
+        min: 1,
+        minMessage: 'The product must be in at least one category.',
+        groups: ['product:write']
+    )]
     private Collection $categories;
 
     public function __construct()
@@ -60,16 +81,25 @@ class Product
         return $this;
     }
 
-    public function getPrice(): float
+    public function getPrice(): string
     {
         return $this->price;
     }
 
-    public function setPrice(float $price): self
+    public function setPrice(string $price): self
     {
         $this->price = $price;
 
         return $this;
+    }
+
+    public function validatePrice(ExecutionContextInterface $context): void
+    {
+        if (! is_numeric($this->price) || (float) $this->price <= 0) {
+            $context->buildViolation('Invalid price format or value.')
+                ->atPath('price')
+                ->addViolation();
+        }
     }
 
     public function getCreatedAt(): \DateTimeImmutable
