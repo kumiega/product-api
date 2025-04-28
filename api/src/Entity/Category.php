@@ -14,6 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     normalizationContext: ['groups' => ['category:read']],
+    denormalizationContext: ['groups' => ['category:write']]
 )]
 #[UniqueEntity(fields: ['code'], message: 'Provided category code is already in use.')]
 class Category
@@ -23,7 +24,7 @@ class Category
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[Groups(['category:read', 'product:read'])]
+    #[Groups(['category:read', 'category:write', 'product:read'])]
     #[ORM\Column(type: 'string', length: 10, unique: true)]
     #[Assert\NotBlank]
     #[Assert\Length(max: 10)]
@@ -37,7 +38,8 @@ class Category
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\ManyToMany(targetEntity : Product::class, mappedBy: 'categories', cascade: ['persist'])]
+    #[Groups(['category:read'])]
+    #[ORM\ManyToMany(targetEntity : Product::class, mappedBy: 'categories')]
     private Collection $products;
 
     public function __construct()

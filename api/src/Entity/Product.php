@@ -16,7 +16,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[Assert\Callback('validatePrice')]
 #[ApiResource(
     normalizationContext: ['groups' => ['product:read']],
-    denormalizationContext: ['groups' => ['product:write']]
+    denormalizationContext: ['groups' => ['product:write']],
+    validationContext: ['groups' => ['product:write']]
 )]
 class Product
 {
@@ -49,8 +50,8 @@ class Product
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[Groups(['product:read', 'product:write'])]
-    #[ORM\ManyToMany(targetEntity : Category::class, inversedBy: 'products', cascade: ['persist'])]
+    #[Groups(['product:read', 'product:write', 'category:write'])]
+    #[ORM\ManyToMany(targetEntity : Category::class, inversedBy: 'products')]
     #[ORM\JoinTable(name: 'product_categories')]
     #[Assert\Count(
         min: 1,
@@ -136,6 +137,7 @@ class Product
     {
         if (! $this->categories->contains($category)) {
             $this->categories->add($category);
+            $category->addProduct($this);
         }
 
         return $this;
