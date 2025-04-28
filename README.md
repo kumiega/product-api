@@ -1,47 +1,140 @@
-<h1 align="center"><a href="https://api-platform.com"><img src="https://api-platform.com/images/logos/Logo_Circle%20webby%20text%20blue.png" alt="API Platform" width="250" height="250"></a></h1>
+# Product API
 
-API Platform is a next-generation web framework designed to easily create API-first projects without compromising extensibility
-and flexibility:
+Projekt powstał w oparciu o [API Platform](https://api-platform.com) i [Symfony](https://symfony.com). Projekt pozwala na tworzenie API REST dla produktów i kategorii. Zawiera ona również funkcje do wysyłania powiadomień e-mailowych oraz zapisywania logów.
 
-* Design your own data model as plain old PHP classes or [**import an existing ontology**](https://api-platform.com/docs/schema-generator).
-* **Expose in minutes a hypermedia REST or a GraphQL API** with pagination, data validation, access control, relation embedding,
-  filters, and error handling...
-* Benefit from Content Negotiation: [GraphQL](https://api-platform.com/docs/core/graphql/), [JSON-LD](https://json-ld.org), [Hydra](https://hydra-cg.com),
-  [HAL](https://github.com/mikekelly/hal_specification/blob/master/hal_specification.md), [JSON:API](https://jsonapi.org/), [YAML](https://yaml.org/), [JSON](https://www.json.org/), [XML](https://www.w3.org/XML/) and [CSV](https://www.ietf.org/rfc/rfc4180.txt) are supported out of the box.
-* Enjoy the **beautiful automatically generated API documentation** ([OpenAPI](https://api-platform.com/docs/core/openapi/)).
-* Add [**a convenient Material Design administration interface**](https://api-platform.com/docs/admin) built with [React](https://reactjs.org/)
-  without writing a line of code.
-* **Scaffold fully functional Progressive-Web-Apps and mobile apps** built with [Next.js](https://api-platform.com/docs/client-generator/nextjs/) (React),
-[Nuxt.js](https://api-platform.com/docs/client-generator/nuxtjs/) (Vue.js) or [React Native](https://api-platform.com/docs/client-generator/react-native/)
-thanks to [the client generator](https://api-platform.com/docs/client-generator/) (a Vue.js generator is also available).
-* Install a development environment and deploy your project in production using **[Docker](https://api-platform.com/docs/distribution)**
-and [Kubernetes](https://api-platform.com/docs/deployment/kubernetes).
-* Easily add **[OAuth](https://oauth.net/) authentication**.
-* Create specs and tests with **[a developer friendly API testing tool](https://api-platform.com/docs/distribution/testing/)**.
+---
 
-The official project documentation is available **[on the API Platform website](https://api-platform.com)**.
+## Środowisko 
 
-API Platform embraces open web standards and the
-[Linked Data](https://www.w3.org/standards/semanticweb/data) movement. Your API will automatically expose structured data.
-It means that your API Platform application is usable **out of the box** with technologies of
-the semantic web.
+Do uruchomienia projektu wymagany jest [Docker](https://www.docker.com/products/docker-desktop/) oraz [Docker Compose](https://docs.docker.com/compose/install/). 
 
-It also means that **your SEO will be improved** because **[Google leverages these formats](https://developers.google.com/search/docs/guides/intro-structured-data)**.
+---
 
-Last but not least, the server component of API Platform is built on top of the [Symfony](https://symfony.com) framework,
-while client components leverage [React](https://reactjs.org/) ([Vue.js](https://vuejs.org/) flavors are also available).
-It means that you can:
+## Instalacja
+1. **Sklonuj repozytorium**:
+```bash
+git clone https://github.com/kumiega/product-api
+cd product-api
 
-* Use **thousands of Symfony bundles and React components** with API Platform.
-* Integrate API Platform in **any existing Symfony, React, or Vue application**.
-* Reuse **all your Symfony and JavaScript skills**, and benefit from the incredible amount of documentation available.
-* Enjoy the popular [Doctrine ORM](https://www.doctrine-project.org/projects/orm.html) (used by default, but fully optional:
-  you can use the data provider you want, including but not limited to MongoDB and Elasticsearch)
+2. **Zbuduj obrazy Docker**:
+```bash
+docker compose build --no-cache
 
-## Install
+3. **Uruchom kontenery**:
+```bash
+docker compose up --wait
 
-[Read the official "Getting Started" guide](https://api-platform.com/docs/distribution/).
+---
 
-## Credits
+## Konfiguracja
+### Plik środowiskowy (`.env`)
+Zmodyfikuj wartości w pliku `api/.env`. Pamiętaj, żeby docelowe wartości były zmienione tylko w środowisku produkcyjnym.
 
-Created by [Kévin Dunglas](https://dunglas.fr). Commercial support is available at [Les-Tilleuls.coop](https://les-tilleuls.coop).
+SERVER_NAME=localhost
+DATABASE_URL=postgresql://api-platform:!ChangeMe!@database:5432/api?serverVersion=15&charset=utf8
+MERCURE_PUBLISHER_JWT_KEY=!ChangeThisMercureJWTSecretKey!
+MERCURE_SUBSCRIBER_JWT_KEY=!ChangeThisMercureJWTSecretKey!
+
+### Ważne ustawienia
+- 🔐 **Zmień domyślne hasła** w zmiennych `DATABASE_URL`, `MERCURE_*`
+- 🌐 Dostosuj `SERVER_NAME` dla środowiska produkcyjnego
+- 🛡️ Włącz HTTPS w produkcji poprzez konfigurację w `docker-compose.yml`
+
+---
+
+## Uruchomienie
+1. **Wykonaj migracje bazy danych**:
+
+```bash
+docker compose exec <container_name> bin/console doctrine:migrations:migrate
+
+2. **Dostępne usługi**:
+| Usługa       | URL                          | Port    |
+|--------------|------------------------------|---------|
+| API          | https://localhost/docs/      | 443     |
+| PostgreSQL   | postgresql://database:5432   | 5432    |
+
+# Product API
+
+Projekt powstał w oparciu o [API Platform](https://api-platform.com) i [Symfony](https://symfony.com). Projekt pozwala na tworzenie API REST dla produktów i kategorii. Zawiera ona również funkcje do wysyłania powiadomień e-mailowych oraz zapisywania logów.
+
+---
+
+## Środowisko 
+
+Do uruchomienia projektu wymagany jest [Docker](https://www.docker.com/products/docker-desktop/) oraz [Docker Compose](https://docs.docker.com/compose/install/). 
+
+---
+
+## Instalacja
+1. **Sklonuj repozytorium**:
+```bash
+git clone https://github.com/kumiega/product-api
+cd product-api
+
+2. **Zbuduj obrazy Docker**:
+```bash
+docker compose build --no-cache
+
+3. **Uruchom kontenery**:
+```bash
+docker compose up --wait
+
+---
+
+## Konfiguracja
+### Plik środowiskowy (`.env`)
+Zmodyfikuj wartości w pliku `api/.env`. Pamiętaj, żeby docelowe wartości były zmienione tylko w środowisku produkcyjnym.
+
+SERVER_NAME=localhost
+DATABASE_URL=postgresql://api-platform:!ChangeMe!@database:5432/api?serverVersion=15&charset=utf8
+MERCURE_PUBLISHER_JWT_KEY=!ChangeThisMercureJWTSecretKey!
+MERCURE_SUBSCRIBER_JWT_KEY=!ChangeThisMercureJWTSecretKey!
+
+### Ważne ustawienia
+- 🔐 **Zmień domyślne hasła** w zmiennych `DATABASE_URL`, `MERCURE_*`
+- 🌐 Dostosuj `SERVER_NAME` dla środowiska produkcyjnego
+- 🛡️ Włącz HTTPS w produkcji poprzez konfigurację w `docker-compose.yml`
+
+---
+
+## Uruchomienie
+1. **Wykonaj migracje bazy danych**:
+
+```bash
+docker compose exec <container_name> bin/console doctrine:migrations:migrate
+
+2. **Dostępne usługi**:
+| Usługa       | URL                          | Port    |
+|--------------|------------------------------|---------|
+| API          | https://localhost/docs/      | 443     |
+| PostgreSQL   | postgresql://database:5432   | 5432    |
+| PWA (Next.js)| http://localhost:3000        | 3000    |
+
+
+3. **Przetestuj API**:
+Skorzystaj z [Postman](https://www.postman.com) lub innego klienta HTTP. Możesz także wykorzystać https://localhost/docs/ do przeglądania API. Poniżej przykład zapytania POST przy pomocy CURL. 
+
+```bash
+curl -X POST "https://localhost/api/products"
+-H "Content-Type: application/json"
+-d '{"name": "Test", "price": "99.99"}'
+
+---
+
+## Zarządzanie
+### Podstawowe komendy
+| Akcja                     | Komenda                                                   |
+|---------------------------|-----------------------------------------------------------|
+| Zatrzymaj kontenery       | `docker compose down`                                     |
+| Aktualizuj zależności PHP | `docker compose exec <container_name> composer install`   |
+| Wejdź do kontenera PHP    | `docker compose exec <container_name> bash`               |
+
+---
+
+## Dokumentacja
+- [Oficjalna dokumentacja API Platform](https://api-platform.com/docs/v3.4)
+- [Konfiguracja FrankenPHP](https://frankenphp.dev/docs/production/)
+- [Dostosowywanie Docker Compose](https://api-platform.com/docs/v2.5/deployment/docker-compose/)
+
+![Architektura API Platform](https://api-platform.com/static/3119f13b70a0dc5f0c3f1e435da5d062/architecture.png)
