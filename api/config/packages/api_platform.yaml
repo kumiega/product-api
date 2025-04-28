@@ -5,6 +5,7 @@ api_platform:
     mercure:
         include_type: true
     # Good defaults for REST APIs
+    use_symfony_listeners: true
     defaults:
         stateless: true
         cache_headers:
