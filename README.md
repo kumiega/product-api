@@ -15,14 +15,17 @@ Do uruchomienia projektu wymagany jest [Docker](https://www.docker.com/products/
 ```bash
 git clone https://github.com/kumiega/product-api
 cd product-api
+```
 
 2. **Zbuduj obrazy Docker**:
 ```bash
 docker compose build --no-cache
+```
 
 3. **Uruchom kontenery**:
 ```bash
 docker compose up --wait
+```
 
 ---
 
@@ -30,10 +33,12 @@ docker compose up --wait
 ### Plik środowiskowy (`.env`)
 Zmodyfikuj wartości w pliku `api/.env`. Pamiętaj, żeby docelowe wartości były zmienione tylko w środowisku produkcyjnym.
 
+```
 SERVER_NAME=localhost
 DATABASE_URL=postgresql://api-platform:!ChangeMe!@database:5432/api?serverVersion=15&charset=utf8
 MERCURE_PUBLISHER_JWT_KEY=!ChangeThisMercureJWTSecretKey!
 MERCURE_SUBSCRIBER_JWT_KEY=!ChangeThisMercureJWTSecretKey!
+```
 
 ### Ważne ustawienia
 - 🔐 **Zmień domyślne hasła** w zmiennych `DATABASE_URL`, `MERCURE_*`
@@ -50,6 +55,7 @@ docker compose exec <container_name> bin/console doctrine:migrations:migrate
 ```
 
 2. **Dostępne usługi**:
+
 | Usługa       | URL                          | Port    |
 |--------------|------------------------------|---------|
 | API          | https://localhost/docs/      | 443     |
@@ -61,8 +67,8 @@ docker compose exec <container_name> bin/console doctrine:migrations:migrate
 Skorzystaj z [Postman](https://www.postman.com) lub innego klienta HTTP. Możesz także wykorzystać https://localhost/docs/ do przeglądania API. Poniżej przykład zapytania POST przy pomocy CURL. 
 
 ```bash
-curl -X POST "https://localhost/api/products"
--H "Content-Type: application/json"
+curl -X POST "https://localhost/api/products" \
+-H "Content-Type: application/json" \
 -d '{"name": "Test", "price": "99.99"}'
 ```
 
