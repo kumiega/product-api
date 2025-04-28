@@ -88,5 +88,3 @@ curl -X POST "https://localhost/api/products" \
 - [Oficjalna dokumentacja API Platform](https://api-platform.com/docs/v3.4)
 - [Konfiguracja FrankenPHP](https://frankenphp.dev/docs/production/)
 - [Dostosowywanie Docker Compose](https://api-platform.com/docs/v2.5/deployment/docker-compose/)
-
-![Architektura API Platform](https://api-platform.com/static/3119f13b70a0dc5f0c3f1e435da5d062/architecture.png)
